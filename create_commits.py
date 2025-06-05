@@ -50,7 +50,6 @@ class GitCommitCreator:
             else:
                 result = subprocess.run(command, shell=True, cwd=self.repo_path,
                                       capture_output=True, text=True)
-            
             if result.returncode != 0:
                 print(f"Error running command: {command}")
                 print(f"Error: {result.stderr}")
