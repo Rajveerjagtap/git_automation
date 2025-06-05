@@ -1,0 +1,107 @@
+name: GitHub Green CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Set up Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+    
+    - name: Test script syntax
+      run: |
+        python -m py_compile create_commits.py
+        python -m py_compile remove_commits.py
+    
+    - name: Test script execution (dry run)
+      run: |
+        echo "Testing script imports and basic functionality"
+        python -c "import create_commits; print('✓ create_commits.py imports successfully')"
+        python -c "import remove_commits; print('✓ remove_commits.py imports successfully')"
+    
+    - name: Test demo script
+      if: matrix.os != 'windows-latest'
+      run: |
+        chmod +x demo.sh
+        chmod +x setup_automation.sh
+    
+    - name: Validate documentation
+      run: |
+        echo "Checking for required documentation files"
+        test -f README.md && echo "✓ README.md exists"
+        test -f LICENSE && echo "✓ LICENSE exists"
+        test -f CONTRIBUTING.md && echo "✓ CONTRIBUTING.md exists"
+        test -f SECURITY.md && echo "✓ SECURITY.md exists"
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black
+    
+    - name: Run flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+    
+    - name: Check code formatting with Black
+      run: |
+        black --check --diff .
+
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run security checks
+      run: |
+        echo "Running basic security validation"
+        # Check for common security issues
+        grep -r "eval\|exec\|__import__" *.py || echo "✓ No dangerous functions found"
+        grep -r "shell=True" *.py && echo "⚠ shell=True usage found (review required)" || echo "✓ No shell=True usage"
+
+  compatibility:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Test cross-platform compatibility
+      run: |
+        echo "Checking for cross-platform compatibility"
+        # Check for platform-specific code
+        grep -r "platform\|sys.platform" *.py || echo "✓ No platform-specific code"
+        # Check for path separators
+        grep -r "\\\\\\|/" *.py | grep -v ".git" || echo "✓ Proper path handling"

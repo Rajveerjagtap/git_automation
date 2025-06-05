@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 GitHub Commit Creator
 Creates automated commits for a specified date range to fill GitHub contribution graph.
@@ -231,7 +230,6 @@ class GitCommitCreator:
             
             current_date += timedelta(days=1)
         
-        # Get ending commit hash
         end_commit = self.get_current_commit_hash()
         
         print(f"\n📊 Summary:")
@@ -243,7 +241,6 @@ class GitCommitCreator:
         date_range = f"{start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
         self.save_automation_log(start_commit, end_commit, total_commits, date_range)
         
-        # Ask about pushing
         push_response = input("\n🚀 Do you want to push commits to remote repository? (y/N): ")
         if push_response.lower() == 'y':
             print("⏳ Pushing commits to remote repository...")
@@ -272,7 +269,6 @@ def get_repo_info():
         print("Please run this script from inside a git repository.")
         return None, None
     
-    # Find suitable target files
     common_files = []
     for root, dirs, files in os.walk(repo_path):
         # Skip .git and other hidden directories
@@ -283,7 +279,6 @@ def get_repo_info():
                 rel_path = os.path.relpath(os.path.join(root, file), repo_path)
                 common_files.append(rel_path)
         
-        # Don't go too deep
         if len(common_files) >= 20:
             break
     

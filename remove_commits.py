@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 GitHub Commit Remover
 Removes automated commits created by the create_commits.py script.

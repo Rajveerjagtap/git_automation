@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Create Release Archive
+      run: |
+        # Create release archive
+        mkdir -p release
+        cp *.py *.sh *.md LICENSE .gitignore release/
+        cp -r .github examples release/
+        
+        # Create tarball
+        tar -czf github-green-${{ github.ref_name }}.tar.gz release/
+        
+        # Create zip file
+        zip -r github-green-${{ github.ref_name }}.zip release/
+    
+    - name: Generate Release Notes
+      run: |
+        echo "# Release ${{ github.ref_name }}" > release_notes.md
+        echo "" >> release_notes.md
+        echo "## 🟢 GitHub Green - Contribution Graph Automation" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "### 📦 What's Included" >> release_notes.md
+        echo "- \`create_commits.py\` - Main commit creation script" >> release_notes.md
+        echo "- \`remove_commits.py\` - Safe commit removal script" >> release_notes.md
+        echo "- \`setup_automation.sh\` - Portable setup script" >> release_notes.md
+        echo "- \`demo.sh\` - Interactive demonstration script" >> release_notes.md
+        echo "- Complete documentation and examples" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "### 🚀 Quick Start" >> release_notes.md
+        echo "\`\`\`bash" >> release_notes.md
+        echo "# Download and extract" >> release_notes.md
+        echo "wget https://github.com/yourusername/github-green/archive/${{ github.ref_name }}.tar.gz" >> release_notes.md
+        echo "tar -xzf ${{ github.ref_name }}.tar.gz" >> release_notes.md
+        echo "cd github-green-*/release" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "# Run setup in your repository" >> release_notes.md
+        echo "./setup_automation.sh" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "# Create commits" >> release_notes.md
+        echo "python3 create_commits.py" >> release_notes.md
+        echo "\`\`\`" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "### 📋 Requirements" >> release_notes.md
+        echo "- Python 3.6+" >> release_notes.md
+        echo "- Git 2.0+" >> release_notes.md
+        echo "- No external dependencies!" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "### 🛡️ Safety Features" >> release_notes.md
+        echo "- Complete automation logging" >> release_notes.md
+        echo "- Safe removal with multiple confirmation levels" >> release_notes.md
+        echo "- Non-destructive operations by default" >> release_notes.md
+        echo "- Cross-platform compatibility" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "See [CHANGELOG.md](CHANGELOG.md) for detailed changes." >> release_notes.md
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        body_path: release_notes.md
+        files: |
+          github-green-${{ github.ref_name }}.tar.gz
+          github-green-${{ github.ref_name }}.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

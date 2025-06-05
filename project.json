@@ -1,0 +1,57 @@
+{
+    "name": "github-green",
+    "version": "1.0.0",
+    "description": "Make your GitHub contribution graph green with realistic commit patterns",
+    "keywords": [
+        "github",
+        "contributions",
+        "automation",
+        "git",
+        "commits",
+        "green-squares",
+        "contribution-graph",
+        "developer-tools"
+    ],
+    "author": {
+        "name": "GitHub Green Contributors",
+        "url": "https://github.com/yourusername/github-green"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yourusername/github-green.git"
+    },
+    "bugs": {
+        "url": "https://github.com/yourusername/github-green/issues"
+    },
+    "homepage": "https://github.com/yourusername/github-green#readme",
+    "scripts": {
+        "demo": "./demo.sh",
+        "setup": "./setup_automation.sh",
+        "create": "python3 create_commits.py",
+        "remove": "python3 remove_commits.py"
+    },
+    "requirements": {
+        "python": ">=3.6",
+        "git": ">=2.0"
+    },
+    "features": [
+        "Zero external dependencies",
+        "Cross-platform compatibility",
+        "Realistic commit patterns",
+        "Safe removal system",
+        "Portable installation",
+        "Multiple date ranges",
+        "File type awareness",
+        "Comprehensive logging"
+    ],
+    "platforms": [
+        "linux",
+        "darwin",
+        "win32"
+    ],
+    "languages": [
+        "Python",
+        "Bash"
+    ]
+}
